@@ -35,12 +35,14 @@ id_t last(){
 		<name>Barber</name>
 		<declaration>clock time;</declaration>
 		<location id="id0" x="-119" y="8">
+			<urgent/>
 		</location>
 		<location id="id1" x="0" y="0">
 			<urgent/>
 		</location>
 		<location id="id2" x="-119" y="68">
 			<name x="-161" y="76">HC_Done</name>
+			<urgent/>
 		</location>
 		<location id="id3" x="0" y="68">
 			<name x="8" y="76">cutting_hair</name>
@@ -104,6 +106,7 @@ clock time;
 		</location>
 		<location id="id8" x="374" y="204">
 			<name x="391" y="187">enter</name>
+			<urgent/>
 		</location>
 		<location id="id9" x="374" y="136">
 			<name x="364" y="102">at_home</name>
@@ -118,6 +121,7 @@ clock time;
 		<transition>
 			<source ref="id8"/>
 			<target ref="id5"/>
+			<label kind="guard" x="272" y="187">count &gt;= 3</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
@@ -133,13 +137,13 @@ clock time;
 		<transition>
 			<source ref="id9"/>
 			<target ref="id8"/>
-			<label kind="guard" x="382" y="178">time &gt;= 2</label>
+			<label kind="guard" x="374" y="161">time &gt;= 2</label>
 		</transition>
 		<transition>
 			<source ref="id6"/>
 			<target ref="id9"/>
 			<label kind="synchronisation" x="442" y="153">haircut_done[id]?</label>
-			<label kind="assignment" x="392" y="178">dequeue()</label>
+			<label kind="assignment" x="467" y="136">dequeue()</label>
 		</transition>
 	</template>
 	<system>// List one or more processes to be composed into a system.
