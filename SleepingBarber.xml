@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_2.dtd'>
+<nta>
+	<declaration>// Place global declarations here.
+
+const int N = 4;
+typedef int [0, N-1] id_t;
+
+int [0,N] count;
+chan barber_free[N], haircut_done[N];
+
+id_t customers[N+1];
+
+void enqueue(id_t element){
+    customers[count++] = element;
+}
+
+void dequeue(){
+    int i = 0;
+    count -= 1;
+    while(i &lt; count){
+        customers[i] = customers[i+1];
+    }
+    customers[i] = 0;
+}
+
+id_t front(){
+return customers[0];
+}
+
+id_t last(){
+    return customers[count-1];
+}</declaration>
+	<template>
+		<name>Barber</name>
+		<declaration>clock time;</declaration>
+		<location id="id0" x="-119" y="8">
+		</location>
+		<location id="id1" x="0" y="0">
+			<urgent/>
+		</location>
+		<location id="id2" x="-119" y="68">
+			<name x="-161" y="76">HC_Done</name>
+		</location>
+		<location id="id3" x="0" y="68">
+			<name x="8" y="76">cutting_hair</name>
+		</location>
+		<location id="id4" x="0" y="-59">
+			<name x="-10" y="-93">sleeping</name>
+		</location>
+		<init ref="id4"/>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id4"/>
+			<label kind="guard" x="-101" y="-59">count == 0</label>
+		</transition>
+		<transition>
+			<source ref="id0"/>
+			<target ref="id3"/>
+			<label kind="select" x="-102" y="-25">e : id_t</label>
+			<label kind="guard" x="-102" y="-8">count &gt; 0</label>
+			<label kind="synchronisation" x="-102" y="8">barber_free[front()]!</label>
+		</transition>
+		<transition>
+			<source ref="id2"/>
+			<target ref="id0"/>
+		</transition>
+		<transition>
+			<source ref="id1"/>
+			<target ref="id3"/>
+			<label kind="select" x="17" y="0">e : id_t</label>
+			<label kind="synchronisation" x="8" y="17">barber_free[front()]!</label>
+			<label kind="assignment" x="17" y="34">time = 0</label>
+			<nail x="0" y="25"/>
+		</transition>
+		<transition>
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<label kind="select" x="-93" y="76">e : id_t</label>
+			<label kind="guard" x="-93" y="93">time &gt;= 1</label>
+			<label kind="synchronisation" x="-93" y="110">haircut_done[front()]!</label>
+		</transition>
+		<transition>
+			<source ref="id4"/>
+			<target ref="id1"/>
+			<label kind="guard" x="0" y="-42">count &gt; 0</label>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Customer</name>
+		<parameter>const id_t id</parameter>
+		<declaration>// Place local declarations here.
+clock time;
+</declaration>
+		<location id="id5" x="298" y="170">
+			<name x="238" y="153">leaving</name>
+			<urgent/>
+		</location>
+		<location id="id6" x="527" y="221">
+			<name x="510" y="187">haircut</name>
+		</location>
+		<location id="id7" x="374" y="289">
+			<name x="332" y="297">waiting_room</name>
+		</location>
+		<location id="id8" x="374" y="204">
+			<name x="391" y="187">enter</name>
+		</location>
+		<location id="id9" x="374" y="136">
+			<name x="364" y="102">at_home</name>
+			<label kind="invariant" x="391" y="119">time&lt;=5</label>
+		</location>
+		<init ref="id9"/>
+		<transition>
+			<source ref="id5"/>
+			<target ref="id9"/>
+			<label kind="assignment" x="297" y="127">time = 0</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id5"/>
+		</transition>
+		<transition>
+			<source ref="id7"/>
+			<target ref="id6"/>
+			<label kind="synchronisation" x="442" y="263">barber_free[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id8"/>
+			<target ref="id7"/>
+			<label kind="guard" x="306" y="229">count &lt; 3</label>
+			<label kind="assignment" x="289" y="246">enqueue(id)</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id8"/>
+			<label kind="guard" x="382" y="178">time &gt;= 2</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id9"/>
+			<label kind="synchronisation" x="442" y="153">haircut_done[id]?</label>
+			<label kind="assignment" x="392" y="178">dequeue()</label>
+		</transition>
+	</template>
+	<system>// List one or more processes to be composed into a system.
+system Barber, Customer;
+    </system>
+	<queries>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
+	</queries>
+</nta>
