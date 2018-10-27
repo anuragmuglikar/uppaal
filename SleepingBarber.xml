@@ -3,11 +3,13 @@
 <nta>
 	<declaration>// Place global declarations here.
 
-const int N = 4;
+const int N = 2;
 typedef int [0, N-1] id_t;
 
-int [0,N] count;
-chan barber_free[N], haircut_done[N];
+int [0,2] count;
+chan barber_free[N];
+chan haircut_done[N];
+broadcast chan barber_wakeup;
 
 id_t customers[N+1];
 
@@ -33,16 +35,15 @@ id_t last(){
 }</declaration>
 	<template>
 		<name>Barber</name>
-		<declaration>clock time;</declaration>
+		<declaration>clock b_time;</declaration>
 		<location id="id0" x="-119" y="8">
-			<urgent/>
 		</location>
 		<location id="id1" x="0" y="0">
 			<urgent/>
 		</location>
 		<location id="id2" x="-119" y="68">
 			<name x="-161" y="76">HC_Done</name>
-			<urgent/>
+			<committed/>
 		</location>
 		<location id="id3" x="0" y="68">
 			<name x="8" y="76">cutting_hair</name>
@@ -59,33 +60,30 @@ id_t last(){
 		<transition>
 			<source ref="id0"/>
 			<target ref="id3"/>
-			<label kind="select" x="-102" y="-25">e : id_t</label>
 			<label kind="guard" x="-102" y="-8">count &gt; 0</label>
 			<label kind="synchronisation" x="-102" y="8">barber_free[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id0"/>
+			<label kind="synchronisation" x="-119" y="21">haircut_done[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
 			<target ref="id3"/>
 			<label kind="select" x="17" y="0">e : id_t</label>
 			<label kind="synchronisation" x="8" y="17">barber_free[front()]!</label>
-			<label kind="assignment" x="17" y="34">time = 0</label>
+			<label kind="assignment" x="17" y="34">b_time := 0</label>
 			<nail x="0" y="25"/>
 		</transition>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<label kind="select" x="-93" y="76">e : id_t</label>
-			<label kind="guard" x="-93" y="93">time &gt;= 1</label>
-			<label kind="synchronisation" x="-93" y="110">haircut_done[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id1"/>
-			<label kind="guard" x="0" y="-42">count &gt; 0</label>
+			<label kind="synchronisation" x="0" y="-46">barber_wakeup?</label>
 		</transition>
 	</template>
 	<template>
@@ -102,7 +100,7 @@ clock time;
 			<name x="510" y="187">haircut</name>
 		</location>
 		<location id="id7" x="374" y="289">
-			<name x="332" y="297">waiting_room</name>
+			<name x="272" y="272">waiting_room</name>
 		</location>
 		<location id="id8" x="374" y="204">
 			<name x="391" y="187">enter</name>
@@ -126,12 +124,14 @@ clock time;
 		<transition>
 			<source ref="id7"/>
 			<target ref="id6"/>
-			<label kind="synchronisation" x="442" y="263">barber_free[id]?</label>
+			<label kind="synchronisation" x="433" y="263">barber_free[id]?</label>
+			<nail x="450" y="255"/>
 		</transition>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id7"/>
 			<label kind="guard" x="306" y="229">count &lt; 3</label>
+			<label kind="synchronisation" x="374" y="221">barber_wakeup!</label>
 			<label kind="assignment" x="289" y="246">enqueue(id)</label>
 		</transition>
 		<transition>
@@ -150,9 +150,5 @@ clock time;
 system Barber, Customer;
     </system>
 	<queries>
-		<query>
-			<formula></formula>
-			<comment></comment>
-		</query>
 	</queries>
 </nta>
