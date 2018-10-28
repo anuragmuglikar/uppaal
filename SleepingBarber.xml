@@ -6,7 +6,7 @@
 const int N = 2;
 typedef int [0, N-1] id_t;
 
-int [0,2] count;
+int [0,3] count;
 chan barber_free[N];
 chan haircut_done[N];
 broadcast chan barber_wakeup;
@@ -22,6 +22,7 @@ void dequeue(){
     count -= 1;
     while(i &lt; count){
         customers[i] = customers[i+1];
+        i++;
     }
     customers[i] = 0;
 }
@@ -43,7 +44,7 @@ id_t last(){
 		</location>
 		<location id="id2" x="-119" y="68">
 			<name x="-161" y="76">HC_Done</name>
-			<committed/>
+			<urgent/>
 		</location>
 		<location id="id3" x="0" y="68">
 			<name x="8" y="76">cutting_hair</name>
@@ -66,7 +67,6 @@ id_t last(){
 		<transition>
 			<source ref="id2"/>
 			<target ref="id0"/>
-			<label kind="synchronisation" x="-119" y="21">haircut_done[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
@@ -79,6 +79,7 @@ id_t last(){
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
+			<label kind="synchronisation" x="-136" y="102">haircut_done[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id4"/>
@@ -92,58 +93,65 @@ id_t last(){
 		<declaration>// Place local declarations here.
 clock time;
 </declaration>
-		<location id="id5" x="298" y="170">
+		<location id="id5" x="442" y="170">
+			<committed/>
+		</location>
+		<location id="id6" x="298" y="170">
 			<name x="238" y="153">leaving</name>
 			<urgent/>
 		</location>
-		<location id="id6" x="527" y="221">
+		<location id="id7" x="527" y="221">
 			<name x="510" y="187">haircut</name>
 		</location>
-		<location id="id7" x="374" y="289">
+		<location id="id8" x="374" y="289">
 			<name x="272" y="272">waiting_room</name>
 		</location>
-		<location id="id8" x="374" y="204">
+		<location id="id9" x="374" y="204">
 			<name x="391" y="187">enter</name>
 			<urgent/>
 		</location>
-		<location id="id9" x="374" y="136">
+		<location id="id10" x="374" y="136">
 			<name x="364" y="102">at_home</name>
 			<label kind="invariant" x="391" y="119">time&lt;=5</label>
 		</location>
-		<init ref="id9"/>
+		<init ref="id10"/>
 		<transition>
 			<source ref="id5"/>
-			<target ref="id9"/>
-			<label kind="assignment" x="297" y="127">time = 0</label>
-		</transition>
-		<transition>
-			<source ref="id8"/>
-			<target ref="id5"/>
-			<label kind="guard" x="272" y="187">count &gt;= 3</label>
+			<target ref="id10"/>
+			<label kind="assignment" x="425" y="136">dequeue()</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
+			<target ref="id5"/>
+			<label kind="synchronisation" x="460" y="178">haircut_done[id]?</label>
+		</transition>
+		<transition>
+			<source ref="id6"/>
+			<target ref="id10"/>
+			<label kind="assignment" x="297" y="127">time = 0</label>
+		</transition>
+		<transition>
+			<source ref="id9"/>
 			<target ref="id6"/>
-			<label kind="synchronisation" x="433" y="263">barber_free[id]?</label>
-			<nail x="450" y="255"/>
+			<label kind="guard" x="272" y="187">count &gt;= 3</label>
 		</transition>
 		<transition>
 			<source ref="id8"/>
 			<target ref="id7"/>
+			<label kind="synchronisation" x="433" y="263">barber_free[id]?</label>
+			<nail x="450" y="255"/>
+		</transition>
+		<transition>
+			<source ref="id9"/>
+			<target ref="id8"/>
 			<label kind="guard" x="306" y="229">count &lt; 3</label>
 			<label kind="synchronisation" x="374" y="221">barber_wakeup!</label>
 			<label kind="assignment" x="289" y="246">enqueue(id)</label>
 		</transition>
 		<transition>
-			<source ref="id9"/>
-			<target ref="id8"/>
-			<label kind="guard" x="374" y="161">time &gt;= 2</label>
-		</transition>
-		<transition>
-			<source ref="id6"/>
+			<source ref="id10"/>
 			<target ref="id9"/>
-			<label kind="synchronisation" x="442" y="153">haircut_done[id]?</label>
-			<label kind="assignment" x="467" y="136">dequeue()</label>
+			<label kind="guard" x="374" y="161">time &gt;= 2</label>
 		</transition>
 	</template>
 	<system>// List one or more processes to be composed into a system.
