@@ -39,57 +39,57 @@ id_t last(){
 	<template>
 		<name>Barber</name>
 		<declaration>clock time;</declaration>
-		<location id="id0" x="-119" y="8">
+		<location id="id0" x="-119" y="-17">
 			<committed/>
 		</location>
-		<location id="id1" x="0" y="0">
+		<location id="id1" x="51" y="-8">
 			<urgent/>
 		</location>
-		<location id="id2" x="-119" y="68">
-			<name x="-161" y="76">HC_Done</name>
+		<location id="id2" x="-119" y="93">
+			<name x="-187" y="102">HC_Done</name>
 		</location>
-		<location id="id3" x="0" y="68">
-			<name x="8" y="76">cutting_hair</name>
-			<label kind="invariant" x="-10" y="85">time &lt;=1</label>
+		<location id="id3" x="51" y="93">
+			<name x="59" y="101">cutting_hair</name>
+			<label kind="invariant" x="58" y="118">time &lt;=1</label>
 		</location>
-		<location id="id4" x="0" y="-59">
-			<name x="-10" y="-93">sleeping</name>
+		<location id="id4" x="-8" y="-102">
+			<name x="-18" y="-136">sleeping</name>
 		</location>
 		<init ref="id4"/>
 		<transition>
 			<source ref="id0"/>
 			<target ref="id4"/>
-			<label kind="guard" x="-101" y="-59">count == 0</label>
+			<label kind="guard" x="-119" y="-85">count == 0</label>
 		</transition>
 		<transition>
 			<source ref="id0"/>
 			<target ref="id3"/>
-			<label kind="guard" x="-102" y="-8">count &gt; 0</label>
-			<label kind="synchronisation" x="-102" y="8">barber_free[front()]!</label>
+			<label kind="guard" x="-85" y="-24">count &gt; 0</label>
+			<label kind="synchronisation" x="-85" y="-8">barber_free[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id2"/>
 			<target ref="id0"/>
-			<label kind="synchronisation" x="-119" y="34">exiting?</label>
+			<label kind="synchronisation" x="-170" y="17">exiting?</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
 			<target ref="id3"/>
-			<label kind="select" x="17" y="0">e : id_t</label>
-			<label kind="synchronisation" x="8" y="17">barber_free[front()]!</label>
-			<label kind="assignment" x="17" y="34">time = 0</label>
-			<nail x="0" y="25"/>
+			<label kind="select" x="68" y="9">e : id_t</label>
+			<label kind="synchronisation" x="59" y="26">barber_free[front()]!</label>
+			<label kind="assignment" x="68" y="43">time = 0</label>
+			<nail x="51" y="34"/>
 		</transition>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-76" y="68">time &gt;=1</label>
-			<label kind="synchronisation" x="-136" y="102">haircut_done[front()]!</label>
+			<label kind="guard" x="-68" y="76">time &gt;=1</label>
+			<label kind="synchronisation" x="-93" y="93">haircut_done[front()]!</label>
 		</transition>
 		<transition>
 			<source ref="id4"/>
 			<target ref="id1"/>
-			<label kind="synchronisation" x="0" y="-46">barber_wakeup?</label>
+			<label kind="synchronisation" x="25" y="-85">barber_wakeup?</label>
 		</transition>
 	</template>
 	<template>
@@ -98,18 +98,18 @@ id_t last(){
 		<declaration>// Place local declarations here.
 clock time;
 </declaration>
-		<location id="id5" x="442" y="170">
+		<location id="id5" x="501" y="212">
 			<committed/>
 		</location>
-		<location id="id6" x="298" y="170">
-			<name x="238" y="153">leaving</name>
+		<location id="id6" x="204" y="204">
+			<name x="144" y="187">leaving</name>
 			<urgent/>
 		</location>
-		<location id="id7" x="527" y="221">
-			<name x="510" y="187">haircut</name>
+		<location id="id7" x="620" y="280">
+			<name x="603" y="246">haircut</name>
 		</location>
-		<location id="id8" x="374" y="289">
-			<name x="272" y="272">waiting_room</name>
+		<location id="id8" x="195" y="280">
+			<name x="93" y="263">waiting_room</name>
 		</location>
 		<location id="id9" x="374" y="204">
 			<name x="391" y="187">enter</name>
@@ -123,13 +123,13 @@ clock time;
 		<transition>
 			<source ref="id5"/>
 			<target ref="id10"/>
-			<label kind="synchronisation" x="392" y="136">exiting!</label>
-			<label kind="assignment" x="425" y="136">dequeue(), time = 0</label>
+			<label kind="synchronisation" x="434" y="144">exiting!</label>
+			<label kind="assignment" x="450" y="161">dequeue(), time = 0</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
 			<target ref="id5"/>
-			<label kind="synchronisation" x="460" y="178">haircut_done[id]?</label>
+			<label kind="synchronisation" x="544" y="212">haircut_done[id]?</label>
 		</transition>
 		<transition>
 			<source ref="id6"/>
@@ -144,25 +144,49 @@ clock time;
 		<transition>
 			<source ref="id8"/>
 			<target ref="id7"/>
-			<label kind="synchronisation" x="433" y="263">barber_free[id]?</label>
-			<nail x="450" y="255"/>
+			<label kind="synchronisation" x="382" y="289">barber_free[id]?</label>
+			<nail x="399" y="281"/>
 		</transition>
 		<transition>
 			<source ref="id9"/>
 			<target ref="id8"/>
-			<label kind="guard" x="306" y="229">count &lt; 4</label>
-			<label kind="synchronisation" x="374" y="221">barber_wakeup!</label>
-			<label kind="assignment" x="289" y="246">enqueue(id)</label>
+			<label kind="guard" x="314" y="238">count &lt; 4</label>
+			<label kind="synchronisation" x="315" y="221">barber_wakeup!</label>
+			<label kind="assignment" x="306" y="255">enqueue(id)</label>
 		</transition>
 		<transition>
 			<source ref="id10"/>
 			<target ref="id9"/>
-			<label kind="guard" x="374" y="161">time &gt;= 2</label>
+			<label kind="guard" x="314" y="161">time &gt;= 2</label>
 		</transition>
 	</template>
 	<system>// List one or more processes to be composed into a system.
 system Barber, Customer;
     </system>
 	<queries>
+		<query>
+			<formula>Customer(3).waiting_room--&gt;Customer(3).haircut</formula>
+			<comment>Checks if the 4th customer will get a hair cut if he starts waiting in the waiting_room</comment>
+		</query>
+		<query>
+			<formula>Customer(2).waiting_room--&gt;Customer(2).haircut</formula>
+			<comment>Checks if the 3rd customer will get a hair cut if he starts waiting in the waiting_room</comment>
+		</query>
+		<query>
+			<formula>Customer(1).waiting_room--&gt;Customer(1).haircut</formula>
+			<comment>Checks if the 1sh customer will get a hair cut if he starts waiting in the waiting_room</comment>
+		</query>
+		<query>
+			<formula>Customer(0).waiting_room--&gt;Customer(0).haircut</formula>
+			<comment>Customer 0 always gets a hair cut eventually when he/she is in the waiting room</comment>
+		</query>
+		<query>
+			<formula>A[]!(Barber.sleeping and forall(i:id_t)Customer(i).waiting_room)</formula>
+			<comment></comment>
+		</query>
+		<query>
+			<formula>A[]!deadlock</formula>
+			<comment></comment>
+		</query>
 	</queries>
 </nta>
