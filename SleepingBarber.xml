@@ -3,14 +3,14 @@
 <nta>
 	<declaration>// Place global declarations here.
 
-const int N = 2;
+const int N = 6;
 typedef int [0, N-1] id_t;
 
 int [0,3] count;
 chan barber_free[N];
 chan haircut_done[N];
 broadcast chan barber_wakeup;
-
+urgent chan exiting;
 id_t customers[N+1];
 
 void enqueue(id_t element){
@@ -30,7 +30,9 @@ void dequeue(){
 id_t front(){
 return customers[0];
 }
-
+id_t second(){
+return customers[1];
+}
 id_t last(){
     return customers[count-1];
 }</declaration>
@@ -38,13 +40,13 @@ id_t last(){
 		<name>Barber</name>
 		<declaration>clock b_time;</declaration>
 		<location id="id0" x="-119" y="8">
+			<committed/>
 		</location>
 		<location id="id1" x="0" y="0">
 			<urgent/>
 		</location>
 		<location id="id2" x="-119" y="68">
 			<name x="-161" y="76">HC_Done</name>
-			<urgent/>
 		</location>
 		<location id="id3" x="0" y="68">
 			<name x="8" y="76">cutting_hair</name>
@@ -67,6 +69,7 @@ id_t last(){
 		<transition>
 			<source ref="id2"/>
 			<target ref="id0"/>
+			<label kind="synchronisation" x="-119" y="21">exiting?</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
@@ -118,7 +121,8 @@ clock time;
 		<transition>
 			<source ref="id5"/>
 			<target ref="id10"/>
-			<label kind="assignment" x="425" y="136">dequeue()</label>
+			<label kind="synchronisation" x="392" y="136">exiting!</label>
+			<label kind="assignment" x="425" y="136">dequeue(), time = 0</label>
 		</transition>
 		<transition>
 			<source ref="id7"/>
@@ -158,5 +162,9 @@ clock time;
 system Barber, Customer;
     </system>
 	<queries>
+		<query>
+			<formula></formula>
+			<comment></comment>
+		</query>
 	</queries>
 </nta>
