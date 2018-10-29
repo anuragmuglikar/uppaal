@@ -6,12 +6,12 @@
 const int N = 6;
 typedef int [0, N-1] id_t;
 
-int [0,4] count;
+int [0,3] count;
 chan barber_free[N];
 chan haircut_done[N];
 broadcast chan barber_wakeup;
 urgent chan exiting;
-id_t customers[4];
+id_t customers[N+1];
 
 void enqueue(id_t element){
     customers[count++] = element;
@@ -38,7 +38,7 @@ id_t last(){
 }</declaration>
 	<template>
 		<name>Barber</name>
-		<declaration>clock time;</declaration>
+		<declaration>clock b_time;</declaration>
 		<location id="id0" x="-119" y="8">
 			<committed/>
 		</location>
@@ -50,7 +50,7 @@ id_t last(){
 		</location>
 		<location id="id3" x="0" y="68">
 			<name x="8" y="76">cutting_hair</name>
-			<label kind="invariant" x="-10" y="85">time &lt;=1</label>
+			<label kind="invariant" x="25" y="93">b_time &gt;= 0</label>
 		</location>
 		<location id="id4" x="0" y="-59">
 			<name x="-10" y="-93">sleeping</name>
@@ -70,20 +70,20 @@ id_t last(){
 		<transition>
 			<source ref="id2"/>
 			<target ref="id0"/>
-			<label kind="synchronisation" x="-119" y="34">exiting?</label>
+			<label kind="synchronisation" x="-170" y="34">exiting?</label>
 		</transition>
 		<transition>
 			<source ref="id1"/>
 			<target ref="id3"/>
 			<label kind="select" x="17" y="0">e : id_t</label>
 			<label kind="synchronisation" x="8" y="17">barber_free[front()]!</label>
-			<label kind="assignment" x="17" y="34">time = 0</label>
+			<label kind="assignment" x="17" y="34">b_time = 0</label>
 			<nail x="0" y="25"/>
 		</transition>
 		<transition>
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<label kind="guard" x="-76" y="68">time &gt;=1</label>
+			<label kind="guard" x="-93" y="68">b_time == 1</label>
 			<label kind="synchronisation" x="-136" y="102">haircut_done[front()]!</label>
 		</transition>
 		<transition>
@@ -123,7 +123,7 @@ clock time;
 		<transition>
 			<source ref="id5"/>
 			<target ref="id10"/>
-			<label kind="synchronisation" x="392" y="136">exiting!</label>
+			<label kind="synchronisation" x="476" y="119">exiting!</label>
 			<label kind="assignment" x="425" y="136">dequeue(), time = 0</label>
 		</transition>
 		<transition>
@@ -139,7 +139,7 @@ clock time;
 		<transition>
 			<source ref="id9"/>
 			<target ref="id6"/>
-			<label kind="guard" x="272" y="187">count &gt;= 4</label>
+			<label kind="guard" x="272" y="187">count &gt;= 3</label>
 		</transition>
 		<transition>
 			<source ref="id8"/>
@@ -150,7 +150,7 @@ clock time;
 		<transition>
 			<source ref="id9"/>
 			<target ref="id8"/>
-			<label kind="guard" x="306" y="229">count &lt; 4</label>
+			<label kind="guard" x="306" y="229">count &lt; 3</label>
 			<label kind="synchronisation" x="374" y="221">barber_wakeup!</label>
 			<label kind="assignment" x="289" y="246">enqueue(id)</label>
 		</transition>
@@ -164,5 +164,9 @@ clock time;
 system Barber, Customer;
     </system>
 	<queries>
+		<query>
+			<formula>E&lt;&gt; Barber.sleeping &amp;&amp; Customer(1).waiting_room</formula>
+			<comment></comment>
+		</query>
 	</queries>
 </nta>
